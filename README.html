@@ -1,0 +1,39 @@
+<h2> Summary </h2>
+<a href="#library">The library and its interface</a>
+<br/>
+<a href="#running">Testing the library</a>
+<br/>
+<a href="#improve">What could be improved</a>
+<br/>
+
+<h2 id="library">The library and its interface </h2>
+The library was implemented using jQuery's model: it loads itself and creates a global object called BasicImageProcessing, which gives access to useful functions.
+Here are the functions that can be used by outside JavaScript modules:
+<ul>
+	<li><span style="font-family:'Courier New'">loadImage(url)</span>: this function loads an image, from the given url. For now, images from other domains can't be used, as a security feature prevents access to the image's data. Loading the image takes a little time, as it has to be displayed for its size to be known. The onload event is used to know when the image is done loading. All the other functions are locked and can't be used until the image finished loading.</li>
+	<li><span style="font-family:'Courier New'">convertToGrayscale(ImageData)</span>: converts the data from any ImageData object to grayscale. The integral image can only be computed from grayscale images (at least the algorithm I implemented), so this function is automatically called on the image loaded.</li>
+	<li><span style="font-family:'Courier New'">computeIntegralImage()</span>: compute the integral image corresponding to the loaded image. Stores the result in an array using the same format as the ImageData.data array: all pixels are written one by one, row by row. Pixels are only represented by one value, though, when ImageData.data uses four values per pixel (RGBA format).</li>
+	<li><span style="font-family:'Courier New'">getImageDimensions()</span>: returns an array containing two elements: the width and the height of the image currently loaded.</li>
+	<li><span style="font-family:'Courier New'">getOriginalPixelValue(x,y)</span>: returns the value of the pixel at the coordinates (x,y), after the image has been converted to grayscale.</li>
+	<li><span style="font-family:'Courier New'">getIntegralPixelValue()</span>: returns the value of the pixel at coordinates (x,y) in the integral image, which means it's the sum of all the pixel values above and one the left of that pixel (inclusive) in the original grayscale image.</li>
+	<li><span style="font-family:'Courier New'">getImageData()</span>: returns the ImageData object associated with the image loaded (after grayscale conversion). Can be used to display the grayscaled image, using <span style="font-family:'Courier New'">canvas.getContext("2d").putImageData</span>.</li>
+	<li><span style="font-family:'Courier New'">getRegionIntegralImage(x,y,width,height)</span>: experimental function. For now, returns the sum of all the pixel values of the integral image, in the region between the four points: (x,y), (x, y+height), (x+width, y), and (x+width, y+height). Still buggy though.</li>
+</ul>
+<br/>
+I was trying to get <span style="font-family:'Courier New'">getRegionIntegralImage</span> to work, but it was taking me too much time to debug as some special cases require a lot of special rules. I decided to push this first version without getting this function to work perfectly because it's not a part of the required interface.
+
+<br/>
+
+<h2 id="running">Testing the library </h2>
+The HTML page test.html imports the library, and the secondary script basicImageProcessingTest.js, which automatically demonstrates the main functions of the library.
+Just opening test.html executes these tests.
+<br/>
+The test pages works on Firefox 16. On Chrome, the browser seems to consider the canvas to have been "tainted by cross-origin data", even though the image used by default is saved on the hard drive.
+As such, this first version should only be considered compatible with Firefox 16.
+<br/>
+Three pictures are packaged with the library: kiwi.png, bnwHor.png and bnwVert.png. They can be used to test the library, as well as any other picture you have on your hard drive.
+<br/>
+
+<h2 id="improve">What could be improved</h2>
+The <span style="font-family:'Courier New'">getRegionIntegralImage</span> function is yet to be thoroughly debugged and tested.
+Also, browser compatibility could be improved. Improving it would mean finding a workaround to circumvent, as much as possible, the security feature that blocks access to cross-origin image data by the canvas API.
