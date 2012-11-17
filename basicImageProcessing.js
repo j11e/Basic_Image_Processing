@@ -2,7 +2,7 @@
 	Basic Image Processing library v0.0.1
 	by Jean-Dominique Innocenti <jd.innocenti@gmail.com>
 	
-	Released under DWTFYWT licence
+	Released under WTFPL licence
 	Date: Nov 17 2012
 */
 
@@ -12,11 +12,12 @@
 		context = undefined, // will store the canvas' context. Defined at the end of the file.
 		imageIsLoaded = false, // used to make sure no operation is done without an image loaded in the canvas.
 		pixelsData = undefined, // used to store the imageData object retrieved from the canvas in loadImage()
+		integralPixelValuesArray = undefined, // used to store the integral image's pixel values
 		BasicImageProcessing = {};	
 	
 	BasicImageProcessing.convertToGrayscale = function(rgbaImageData) 
 	{
-		// this functin can be used without an image loaded in the canvas, as it takes any image data object as argument.
+		// this function can be used without an image loaded in the canvas, as it takes any image data object as argument.
 		
 		// inspired by http://jsperf.com/convert-rgba-to-grayscale
 		var srcLength = rgbaImageData.data.length;
@@ -28,6 +29,7 @@
 		
 		for(var i=0; i< rgbaImageData.data.length; i++)
 		{
+			// now, the colored data is replaced by the "grayscaled average"
 			rgbaImageData.data[4*i] = grayscaleArray[i];
 			rgbaImageData.data[(4*i)+1] = grayscaleArray[i];
 			rgbaImageData.data[(4*i)+2] = grayscaleArray[i];
@@ -42,7 +44,10 @@
 
 	BasicImageProcessing.loadImage = function(url) 
 	{
+		// this function takes an url and loads the associated image into the library's canvas element
+		// then extracts the ImageData objet, and converts it to grayscale to make it usable by the computeIntegralImage function
 		imageIsLoaded = false;
+		integralPixelValuesArray = undefined;
 		
 		var imageObj = document.createElement("img");
 		imageObj.id = "basicImageProcessing_tempImg";
@@ -71,6 +76,7 @@
 	BasicImageProcessing.getImageData = function() 
 	{
 		// this function can only be called if an image has been loaded.
+		// it returns the ImageData object of the library's canvas element so that the image can be displayed by the user's script
 		if(!imageIsLoaded)
 		{
 			throw "The image hasn't finished loading or no image was loaded.";
@@ -82,6 +88,7 @@
 	BasicImageProcessing.getOriginalPixelValue = function(x, y)
 	{
 		// this function can only be called if an image has been loaded.
+		// it returns the value of the pixel at coordinates (x,y) on the original grayscaled image.
 		if(!imageIsLoaded)
 		{
 			throw "The image hasn't finished loading or no image was loaded.";
@@ -114,10 +121,17 @@
 	BasicImageProcessing.getIntegralPixelValue = function(x, y)
 	{
 		// this function can only be called if an image has been loaded.
+		// it returns the value of the pixel at coordinates (x,y) on the integral image computed from the original image.
 		if(!imageIsLoaded)
 		{
 			throw "The image hasn't finished loading or no image was loaded.";
 		}	
+		
+		// this function can only be called if the integral image has been computed.
+		if(!integralPixelValuesArray)
+		{
+			throw "The integral image hasn't been computed yet.";
+		}
 	
 		// checking the parameters are valid
 
@@ -154,6 +168,12 @@
 		if(!imageIsLoaded)
 		{
 			throw "The image hasn't finished loading or no image was loaded.";
+		}
+		
+		// this function can only be called if the integral image has been computed.
+		if(!integralPixelValuesArray)
+		{
+			throw "The integral image hasn't been computed yet.";
 		}
 		
 		// checking the parameters are valid
