@@ -57,19 +57,17 @@
 		
 		imageObj.onload = function() {  // the onload event is fired when the image finished loading.
 			imageIsLoaded = true;
-			canvas.width = imageObj.clientWidth; // clientWidth/Height is the width/height of the displayed content, not counting any margin/border
-			canvas.height = imageObj.clientHeight;
+			canvas.width = imageObj.width; // clientWidth/Height is the width/height of the displayed content, not counting any margin/border
+			canvas.height = imageObj.height;
 			
 			context.drawImage(imageObj, 0,0); // draws the image in the canvas, necessary to get the image data
-			pixelsData = context.getImageData(0,0,imageObj.clientWidth,imageObj.clientHeight);
+			pixelsData = context.getImageData(0,0,imageObj.width,imageObj.height);
 			// computing the integral image is done on a grayscale picture, so we convert the image data
 			pixelsData = BasicImageProcessing.convertToGrayscale(pixelsData);
 			
-			document.body.removeChild(document.getElementById(imageObj.id)); // cleans up the DOM
 			console.log("BasicImageProcessing: Image loaded.");
 		};
 		
-		document.body.appendChild(imageObj);
 		imageObj.src = url;
 	};
 
@@ -292,6 +290,13 @@
 	var context = canvas.getContext('2d');
 	
 	window.BasicImageProcessing = BasicImageProcessing;
+	
+	if(!(console && console.log)) // prevents bugs if no console.
+	{
+		console = {};
+		console.log = function() {};
+		window.console = console;
+	}
 	
 	console.log("BasicImageProcessing loaded");
 })(window);
