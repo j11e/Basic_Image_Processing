@@ -32,9 +32,10 @@ function doTests()
 	// now let's compute the integral image
 	BasicImageProcessing.computeIntegralImage();
 	console.log("Tests: integral image computed");
-	
+
 	// okay, now let's see if that worked. 
 	// let's print a bunch of numbers in a div.
+
 	var div = document.createElement("div");
 	div.style.border = "1px solid black";
 
@@ -50,5 +51,5 @@ function doTests()
 	div.innerHTML += "And here's the integral image's pixel value at (1,1), the sum of the four previous pixels: "+results[4]+".";
 	
 	document.body.appendChild(div);
-	console.log("tests: div added.");
+	console.log("tests: div added.");	
 }
